@@ -21,13 +21,31 @@
 
 import pymongo
 from pymongo import MongoClient
+from pprint import pprint
 
 client = MongoClient('127.0.0.1', 27017)
 db = client['final']
 coll = db['netflix']
 
+def print_cursor(cursor):
+  for doc in cursor:
+    pprint(doc)
+
 def run_queries():
-  pass
+  # 1
+  # Number of movies compared to TV shows
+  q1 = coll.aggregate([
+    {
+      '$group': {
+        '_id': '$type',
+        'count': {
+          '$sum': 1
+        }
+      }
+    }
+  ])
+  
+  print_cursor(q1)
 
 if __name__ == '__main__':
   run_queries()
