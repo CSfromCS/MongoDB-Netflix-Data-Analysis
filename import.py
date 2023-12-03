@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 # This file contains the MongoDB insert statements for the netflix1.csv file
+
 db.netflix.insertMany([
 {'show_id': 's1', 'type': 'Movie', 'title': 'Dick Johnson Is Dead', 'director': ['Kirsten Johnson'], 'country': 'United States', 'release_year': 2020, 'rating': 'PG-13', 'duration': '90 min', 'listed_in': ['Documentaries'], 'month_added': 9, 'day_added': 25, 'year_added': 2021, 'day_of_week_added': 'Saturday', 'movie_min': 90},
 {'show_id': 's3', 'type': 'TV Show', 'title': 'Ganglands', 'director': ['Julien Leclercq'], 'country': 'France', 'release_year': 2021, 'rating': 'TV-MA', 'duration': '1 Season', 'listed_in': ['Crime TV Shows', 'International TV Shows', 'TV Action & Adventure'], 'month_added': 9, 'day_added': 24, 'year_added': 2021, 'day_of_week_added': 'Friday', 'tv_seasons': 1},
