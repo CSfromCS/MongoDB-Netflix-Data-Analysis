@@ -113,6 +113,54 @@ def run_queries():
     }
   ])
   print_cursor(q2b, '2b')
+  
+  # 3a
+  # Countries with the most number of movies
+  q3a = coll.aggregate([
+    {
+      '$match': { 'type': 'Movie' }
+    }, {
+      '$group': {
+        '_id': '$country',
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'country': '$_id',
+        'count': 1
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }, {
+      '$limit': 3
+    }
+  ])
+  print_cursor(q3a, '3a')
+  
+  # 3b
+  # Countries with the most number of tv shows
+  q3a = coll.aggregate([
+    {
+      '$match': { 'type': 'TV Show' }
+    }, {
+      '$group': {
+        '_id': '$country',
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'country': '$_id',
+        'count': 1
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }, {
+      '$limit': 3
+    }
+  ])
+  print_cursor(q3a, '3a')
 
 
 if __name__ == '__main__':
