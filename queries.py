@@ -27,7 +27,10 @@ client = MongoClient('127.0.0.1', 27017)
 db = client['final']
 coll = db['netflix']
 
-def print_cursor(cursor):
+def print_cursor(cursor, num=None):
+  if num:
+    print('Query #' + num)
+  
   for doc in cursor:
     pprint(doc)
 
@@ -38,14 +41,79 @@ def run_queries():
     {
       '$group': {
         '_id': '$type',
-        'count': {
-          '$sum': 1
-        }
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'type': '$_id',
+        'count': 1
       }
     }
   ])
+  print_cursor(q1, '1')
   
-  print_cursor(q1)
+  # 2a
+  # Directors with the highest numbers of movies and TV shows directed
+  q2a = coll.aggregate([
+    {
+      '$unwind': '$director'
+    }, {
+      '$group': {
+        '_id': '$director',
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'name': '$_id',
+        'count': 1
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }, {
+      '$limit': 10
+    }
+  ])
+  print_cursor(q2a, '2a')
+
+  # 2b
+  # Directors who have directed in the most number of categories
+  q2b = coll.aggregate([
+    {
+      '$unwind': '$director'
+    }, {
+      '$unwind': '$listed_in'
+    }, {
+      '$group': {
+        '_id': {
+          'name': '$director',
+          'category': '$listed_in'
+        },
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$group': {
+        '_id': '$_id.name',
+        'num_categories': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'director': '$_id',
+        'num_categories': 1
+      }
+    }, {
+      '$sort': {
+        'num_categories': -1,
+        'director': 1
+      }
+    }, {
+      '$limit': 10
+    }
+  ])
+  print_cursor(q2b, '2b')
+
 
 if __name__ == '__main__':
   run_queries()
