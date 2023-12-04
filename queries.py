@@ -114,6 +114,70 @@ def run_queries():
   ])
   print_cursor(q2b, '2b')
   
+  # 2c
+  # Most common first name for directors
+  # https://stackoverflow.com/questions/21387969/mongodb-count-the-number-of-items-in-an-array
+  # https://stackoverflow.com/questions/38377582/mongodb-aggregation-join-array-of-strings-to-single-string
+  q2c = coll.aggregate([
+    {
+      '$unwind': '$director'
+    }, {
+      '$match': {
+        'director': {
+          '$not': { '$eq': 'Not Given' }
+        }
+      }
+    }, {
+      '$group': {
+        '_id': '$director'
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'director': '$_id',
+        'director_split': {
+          '$split': ['$_id', ' ']
+        }
+      }
+    }, {
+      '$project': {
+        'director': 1,
+        'director_firstname': { '$first': '$director_split' },
+        'director_lastname': {
+          '$reduce': {
+            'input': {
+              '$slice': [
+                '$director_split',
+                { '$subtract': [1, { '$size': '$director_split' }] }
+              ],
+            },
+            'initialValue': '',
+            'in': {
+              '$concat': [
+                '$$value',
+                { '$cond': [{'$eq': ['$$value', '']}, '', ' '] },
+                '$$this'
+              ]
+            }
+          }
+        }
+      }
+    }, {
+      '$group': {
+        '_id': '$director_firstname',
+        'director_lastnames': {
+          '$push': '$director_lastname'
+        },
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }, {
+      '$limit': 5
+    }
+  ])
+  print_cursor(q2c, '2c')
+  
   # 3a
   # Countries with the most number of movies
   q3a = coll.aggregate([
