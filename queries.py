@@ -221,6 +221,7 @@ def run_queries():
   
   # 4b
   # Most popular category per country
+  # https://www.mongodb.com/community/forums/t/selecting-documents-with-largest-value-of-a-field/107032
   q4b = coll.aggregate([
     {
       '$unwind': '$listed_in'
@@ -240,8 +241,15 @@ def run_queries():
     }, {
       '$group': {
         '_id': '$_id.country',
-        'max_num': { '$max': '$count' },
-        'val': { '$first': '$$ROOT' }
+        'max_count': { '$max': '$count' },
+        'max_val': { '$first': '$$ROOT' }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'country': '$max_val._id.country',
+        'category': '$max_val._id.category',
+        'count': '$max_count'
       }
     }, {
       '$limit': 10
@@ -336,6 +344,74 @@ def run_queries():
     }
   ])
   print_cursor(q6b, '6b')
+  
+  # 7a
+  # Most common month and year added to Netflix
+  q7a = coll.aggregate([
+    {
+      '$group': {
+        '_id': {
+          'year': '$year_added',
+          'month': '$month_added'
+        },
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'month': '$_id.month',
+        'year': '$_id.year',
+        'count': 1
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }, {
+      '$limit': 10
+    }
+  ])
+  print_cursor(q7a, '7a')
+  
+  # 7b
+  # Most common release day of the week
+  q7b = coll.aggregate([
+    {
+      '$group': {
+        '_id': '$day_of_week_added',
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }
+  ])
+  print_cursor(q7b, '7b')
+  
+  # 7c
+  # Movies that were added late
+  # https://stackoverflow.com/questions/33891511/mongodb-concat-int-and-string
+  q7c = coll.aggregate([
+    {
+      '$project': {
+        '_id': 0,
+        'title': 1,
+        'release_year': 1,
+        'date_added': {
+          '$concat': [
+            { '$substr': ['$month_added', 0, -1] },
+            '/',
+            { '$substr': ['$day_added', 0, -1] },
+            '/',
+            { '$substr': ['$year_added', 0, -1] },
+          ],
+        },
+        'year_delay': { '$subtract': ['$year_added', '$release_year'] }
+      }
+    }, {
+      '$sort': { 'year_delay': -1 }
+    }, {
+      '$limit': 5
+    }
+  ])
+  print_cursor(q7c, '7c')
 
 if __name__ == '__main__':
   run_queries()
