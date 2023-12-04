@@ -409,6 +409,28 @@ def run_queries():
   ])
   print_cursor(q6b, '6b')
   
+  # 6c
+  # Evolution of duration over the years
+  q6c = coll.aggregate([
+    {
+      '$match': { 'type': 'Movie' }
+    }, {
+      '$group': {
+        '_id': '$release_year',
+        'ave_duration': { '$avg': '$movie_min' }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'year': '$_id',
+        'ave_duration': 1
+      }
+    }, {
+      '$sort': { 'year': 1 }
+    }
+  ])
+  print_cursor(q6c, '6c')
+  
   # 7a
   # Most common month and year added to Netflix
   q7a = coll.aggregate([
