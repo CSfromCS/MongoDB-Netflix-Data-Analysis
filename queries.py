@@ -161,7 +161,181 @@ def run_queries():
     }
   ])
   print_cursor(q3a, '3a')
-
+  
+  # 4
+  # Popular genres for movies and TV shows
+  q4amovies = coll.aggregate([
+    {
+      '$unwind': '$listed_in'
+    }, {
+      '$match': { 'type': 'Movie' }
+    }, {
+      '$group': {
+        '_id': {
+          'category': '$listed_in',
+          'type': '$type'
+        },
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'category': '$_id.category',
+        'type': '$_id.type',
+        'count': 1
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }, {
+      '$limit': 5
+    }
+  ])
+  q4ashows = coll.aggregate([
+    {
+      '$unwind': '$listed_in'
+    }, {
+      '$match': { 'type': 'TV Show' }
+    }, {
+      '$group': {
+        '_id': {
+          'category': '$listed_in',
+          'type': '$type'
+        },
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'category': '$_id.category',
+        'type': '$_id.type',
+        'count': 1
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }, {
+      '$limit': 5
+    }
+  ])
+  print_cursor(q4amovies, '4a: movies')
+  print_cursor(q4ashows, '4a: shows')
+  
+  # 4b
+  # Most popular category per country
+  q4b = coll.aggregate([
+    {
+      '$unwind': '$listed_in'
+    }, {
+      '$group': {
+        '_id': {
+          'category': '$listed_in',
+          'country': '$country'
+        },
+        'count': { '$sum': 1 },
+      }
+    }, {
+      '$sort': {
+        'country': 1,
+        'count': -1,
+      }
+    }, {
+      '$group': {
+        '_id': '$_id.country',
+        'max_num': { '$max': '$count' },
+        'val': { '$first': '$$ROOT' }
+      }
+    }, {
+      '$limit': 10
+    }
+  ])
+  print_cursor(q4b, '4b')
+  
+  # 5a
+  # Ratings with number of shows
+  q5a = coll.aggregate([
+    {
+      '$group': {
+        '_id': '$rating',
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'rating': '$_id',
+        'count': 1
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }
+  ])
+  print_cursor(q5a, '5a')
+  
+  # 5b
+  # Correlation between rating and category
+  q5b = coll.aggregate([
+    {
+      '$unwind': '$listed_in'
+    }, {
+      '$group': {
+        '_id': {
+          'category': '$listed_in',
+          'rating': '$rating'
+        },
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'category': '$_id.category',
+        'rating': '$_id.rating',
+        'count': 1
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }, {
+      '$limit': 10
+    }
+  ])
+  print_cursor(q5b, '5b')
+  
+  # 6a
+  # Minimum, maximum, and average duration of movies in minutes
+  q6a = coll.aggregate([
+    {
+      '$match': { 'type': 'Movie' }
+    }, {
+      '$group': {
+        '_id': 0,
+        'min_duration': { '$min': '$movie_min' },
+        'max_duration': { '$max': '$movie_min' },
+        'ave_duration': { '$avg': '$movie_min' },
+      }
+    }, {
+      '$project': {
+        '_id': 0
+      }
+    }
+  ])
+  print_cursor(q6a, '6a')
+  
+  # 6b
+  # Minimum, maximum, and average number of seasons of TV shows
+  q6b = coll.aggregate([
+    {
+      '$match': { 'type': 'TV Show' }
+    }, {
+      '$group': {
+        '_id': 0,
+        'min_duration': { '$min': '$tv_seasons' },
+        'max_duration': { '$max': '$tv_seasons' },
+        'ave_duration': { '$avg': '$tv_seasons' }
+      }
+    }, {
+      '$project': {
+        '_id': 0
+      }
+    }
+  ])
+  print_cursor(q6b, '6b')
 
 if __name__ == '__main__':
   run_queries()
