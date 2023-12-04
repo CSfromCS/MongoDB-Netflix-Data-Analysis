@@ -29,7 +29,7 @@ coll = db['netflix']
 
 def print_cursor(cursor, num=None):
   if num:
-    print('Query #' + num)
+    print('\nQuery #' + num)
   
   for doc in cursor:
     pprint(doc)
@@ -51,7 +51,6 @@ def run_queries():
       }
     }
   ])
-  print_cursor(q1, '1')
   
   # 2a
   # Directors with the highest numbers of movies and TV shows directed
@@ -75,7 +74,6 @@ def run_queries():
       '$limit': 10
     }
   ])
-  print_cursor(q2a, '2a')
 
   # 2b
   # Directors who have directed in the most number of categories
@@ -112,7 +110,6 @@ def run_queries():
       '$limit': 10
     }
   ])
-  print_cursor(q2b, '2b')
   
   # 2c
   # Most common first name for directors
@@ -176,7 +173,6 @@ def run_queries():
       '$limit': 5
     }
   ])
-  print_cursor(q2c, '2c')
   
   # 3a
   # Countries with the most number of movies
@@ -200,7 +196,6 @@ def run_queries():
       '$limit': 3
     }
   ])
-  print_cursor(q3a, '3a')
   
   # 3b
   # Countries with the most number of tv shows
@@ -224,7 +219,6 @@ def run_queries():
       '$limit': 3
     }
   ])
-  print_cursor(q3b, '3b')
   
   # 4
   # Popular genres for movies and TV shows
@@ -280,8 +274,6 @@ def run_queries():
       '$limit': 5
     }
   ])
-  print_cursor(q4amovies, '4a: movies')
-  print_cursor(q4ashows, '4a: shows')
   
   # 4b
   # Most popular category per country
@@ -319,7 +311,6 @@ def run_queries():
       '$limit': 10
     }
   ])
-  print_cursor(q4b, '4b')
   
   # 5a
   # Ratings with number of shows
@@ -339,7 +330,6 @@ def run_queries():
       '$sort': { 'count': -1 }
     }
   ])
-  print_cursor(q5a, '5a')
   
   # 5b
   # Correlation between rating and category
@@ -367,7 +357,6 @@ def run_queries():
       '$limit': 10
     }
   ])
-  print_cursor(q5b, '5b')
   
   # 6a
   # Minimum, maximum, and average duration of movies in minutes
@@ -387,7 +376,6 @@ def run_queries():
       }
     }
   ])
-  print_cursor(q6a, '6a')
   
   # 6b
   # Minimum, maximum, and average number of seasons of TV shows
@@ -407,7 +395,6 @@ def run_queries():
       }
     }
   ])
-  print_cursor(q6b, '6b')
   
   # 6c
   # Evolution of duration over the years
@@ -433,7 +420,6 @@ def run_queries():
       '$sort': { 'year': 1 }
     }
   ])
-  print_cursor(q6c, '6c')
   
   # 6d
   q6d = coll.aggregate([
@@ -458,7 +444,6 @@ def run_queries():
       '$sort': { 'year': 1 }
     }
   ])
-  print_cursor(q6d, '6d')
   
   # 7a
   # Most common month and year added to Netflix
@@ -484,7 +469,6 @@ def run_queries():
       '$limit': 10
     }
   ])
-  print_cursor(q7a, '7a')
   
   # 7b
   # Most common release day of the week
@@ -498,7 +482,6 @@ def run_queries():
       '$sort': { 'count': -1 }
     }
   ])
-  print_cursor(q7b, '7b')
   
   # 7c
   # Movies that were added late
@@ -526,7 +509,6 @@ def run_queries():
       '$limit': 5
     }
   ])
-  print_cursor(q7c, '7c')
   
   # 8a
   # Most popular genre in the Philippines
@@ -552,7 +534,6 @@ def run_queries():
       '$limit': 5
     }
   ])
-  print_cursor(q8a, '8a')
   
   # 8b
   # Directors who have directed Filipino movies and shows
@@ -578,6 +559,28 @@ def run_queries():
       '$limit': 10
     }
   ])
+
+  # print cursors
+
+  print_cursor(q1, '1')
+  print_cursor(q2a, '2a')
+  print_cursor(q2b, '2b')
+  print_cursor(q2c, '2c')
+  print_cursor(q3a, '3a')
+  print_cursor(q3b, '3b')
+  print_cursor(q4amovies, '4a: movies')
+  print_cursor(q4ashows, '4a: shows')
+  print_cursor(q4b, '4b')
+  print_cursor(q5a, '5a')
+  print_cursor(q5b, '5b')
+  print_cursor(q6a, '6a')
+  print_cursor(q6b, '6b')
+  print_cursor(q6c, '6c')
+  print_cursor(q6d, '6d')
+  print_cursor(q7a, '7a')
+  print_cursor(q7b, '7b')
+  print_cursor(q7c, '7c')
+  print_cursor(q8a, '8a')
   print_cursor(q8b, '8b')
 
 if __name__ == '__main__':
