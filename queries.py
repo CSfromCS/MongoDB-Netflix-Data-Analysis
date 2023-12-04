@@ -527,6 +527,58 @@ def run_queries():
     }
   ])
   print_cursor(q7c, '7c')
+  
+  # 8a
+  # Most popular genre in the Philippines
+  q8a = coll.aggregate([
+    {
+      '$match': { 'country': 'Philippines' }
+    }, {
+      '$unwind': '$listed_in'
+    }, {
+      '$group': {
+        '_id': '$listed_in',
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'category': '$_id',
+        'count': 1
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }, {
+      '$limit': 5
+    }
+  ])
+  print_cursor(q8a, '8a')
+  
+  # 8b
+  # Directors who have directed Filipino movies and shows
+  q8b = coll.aggregate([
+    {
+      '$match': { 'country': 'Philippines' }
+    }, {
+      '$unwind': '$director'
+    }, {
+      '$group': {
+        '_id': '$director',
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'director': '$_id',
+        'count': 1
+      }
+    }, {
+      '$sort': { 'count': -1 }
+    }, {
+      '$limit': 10
+    }
+  ])
+  print_cursor(q8b, '8b')
 
 if __name__ == '__main__':
   run_queries()
