@@ -140,7 +140,7 @@ def run_queries():
   
   # 3b
   # Countries with the most number of tv shows
-  q3a = coll.aggregate([
+  q3b = coll.aggregate([
     {
       '$match': { 'type': 'TV Show' }
     }, {
@@ -160,7 +160,7 @@ def run_queries():
       '$limit': 3
     }
   ])
-  print_cursor(q3a, '3a')
+  print_cursor(q3b, '3b')
   
   # 4
   # Popular genres for movies and TV shows
