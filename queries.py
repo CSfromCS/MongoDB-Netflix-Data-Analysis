@@ -417,19 +417,48 @@ def run_queries():
     }, {
       '$group': {
         '_id': '$release_year',
-        'ave_duration': { '$avg': '$movie_min' }
+        'max_duration': { '$max': '$movie_min' },
+        'ave_duration': { '$avg': '$movie_min' },
+        'count': { '$sum': 1 }
       }
     }, {
       '$project': {
         '_id': 0,
         'year': '$_id',
-        'ave_duration': 1
+        'max_duration': 1,
+        'ave_duration': 1,
+        'count': 1
       }
     }, {
       '$sort': { 'year': 1 }
     }
   ])
   print_cursor(q6c, '6c')
+  
+  # 6d
+  q6d = coll.aggregate([
+    {
+      '$match': { 'type': 'TV Show' }
+    }, {
+      '$group': {
+        '_id': '$release_year',
+        'max_seasons': { '$max': '$tv_seasons' },
+        'ave_seasons': { '$avg': '$tv_seasons' },
+        'count': { '$sum': 1 }
+      }
+    }, {
+      '$project': {
+        '_id': 0,
+        'year': '$_id',
+        'max_seasons': 1,
+        'ave_seasons': 1,
+        'count': 1
+      }
+    }, {
+      '$sort': { 'year': 1 }
+    }
+  ])
+  print_cursor(q6d, '6d')
   
   # 7a
   # Most common month and year added to Netflix
